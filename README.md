@@ -12,4 +12,4 @@ pip install git+https://github.com/a1exsan/oligoMass.git#egg=oligoMass
 
 from PyPi:
 
-pip install oligoMass
+pip install oligoMass -U
