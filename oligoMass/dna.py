@@ -126,19 +126,19 @@ class oligoSeq():
         ll = list(s)
         out = ''
         for l in ll:
-            if l in 'A C G T'.split(' '):
-                out += l
+            if l in 'A C G T a c g t'.split(' '):
+                out += l.upper()
             for k in self.modifications_dict.keys():
                 if l in self.modifications_dict[k].split(' '):
                     self.modifications[k] += 1
         return out
 
-    def string2seq_alpha(self, s, alpha='A C G T'):
+    def string2seq_alpha(self, s, alpha='A C G T a c g t'):
         ll = list(s)
         out = ''
         for l in ll:
             if l in alpha.split(' '):
-                out += l
+                out += l.upper()
             for k in self.modifications_dict.keys():
                 if l in self.modifications_dict[k].split(' '):
                     self.modifications[k] += 1
