@@ -145,14 +145,13 @@ class oligoSeq():
         return out
 
     def seq_end_cut(self, s, cut_number=1, end_type="5'"):
-        seq = list(self.string2seq_alpha(s, alpha='A C G T +'))
+        seq = list(self.string2seq_alpha(s, alpha='A C G T a c g t +'))
         if end_type == "5'":
             for i in range(cut_number):
                 if seq[0] in ['+']:
                     seq.pop(0)
                 if seq[0] in 'A C G T'.split(' '):
                     seq.pop(0)
-            #print(seq)
 
         if end_type == "3'":
             for i in range(cut_number):
@@ -160,7 +159,6 @@ class oligoSeq():
                     seq.pop(-1)
                 if seq[-1] in ['+']:
                     seq.pop(-1)
-            #print(seq)
 
         return ''.join(seq)
 
