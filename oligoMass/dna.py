@@ -129,14 +129,14 @@ class oligoSeq():
         ll = list(s)
         out = ''
         for l in ll:
-            if l in 'A C G T a c g t'.split(' '):
+            if l in 'A C G T U a c g t u'.split(' '):
                 out += l.upper()
             for k in self.modifications_dict.keys():
                 if l in self.modifications_dict[k].split(' '):
                     self.modifications[k] += 1
         return out
 
-    def string2seq_alpha(self, s, alpha='A C G T a c g t'):
+    def string2seq_alpha(self, s, alpha='A C G T U a c g t u'):
         ll = list(s)
         out = ''
         for l in ll:
@@ -198,7 +198,7 @@ class oligoSeq():
 
     def getAvgMass(self):
         return mm.Formula(self.getMolecularFormula()).mass
-    
+
 
 
 def test():
@@ -206,13 +206,13 @@ def test():
     f = mm.Formula('CO') + mm.Formula('CO')
     print(f.empirical)
 
-    seq = oligoSeq('ACTG+GG+TC')
+    seq = oligoSeq('AAAU')
     print(seq.getMolMass())
     print(seq.getBruttoFormula())
 
-    f = mm.Formula('ACTGGGTC')
-    print(f.empirical)
-    print(f.mass)
+    #f = mm.Formula('ACTGGGTC')
+    #print(f.empirical)
+    #print(f.mass)
 
     #dna = osa.dnaSeq('ACT+GGG+TC')
     #print(dna.getBruttoFormula())
