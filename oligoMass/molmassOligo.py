@@ -16,6 +16,7 @@ class oligoNAModifications(oligoModifications):
         super().__init__()
 
         self.__set_modifications()
+        self.exModDB = exMod.exModifDataFrame()
 
     def __set_modifications(self):
         self.mod_alphabet = '+ * m r'.split(' ')
@@ -61,6 +62,13 @@ class oligoNAModifications(oligoModifications):
                 f_mod += f'({self.mod_formula[k][0]}){self.mod_list[k]}'
                 if self.mod_formula[k][1] != '':
                     f_ += f'({self.mod_formula[k][1]}){self.mod_list[k]}'
+        if len(list(self.ex_mod)) > 0:
+            for key in self.ex_mod.keys():
+                mass = int(round(self.ex_mod[key]*self.exModDB.get_mod_properties(key)['mass'], 0))
+                if mass > 0:
+                    delta = int(round(0.007941*mass, 0))
+                    f_mod += f'(H){mass - delta}'
+                    #print(f_mod, mass, delta, 0.007941*mass)
         if f_ != '':
             return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
         else:
@@ -156,10 +164,15 @@ def test():
 
     print(seq.getMolMass() - olig2.getAvgMass())
 
-    o1 = oligoNASequence('GT}test_mod{AR')
+    o1 = oligoNASequence('GT}5Phos{AG')
     print(o1.getMolecularFormula())
     print(o1.getAvgMass())
     print(o1.modifications.ex_mod)
+
+    o2 = oligoNASequence('GTAG')
+    print(o2.getMolecularFormula())
+    print(o2.getAvgMass())
+    print(o2.modifications.ex_mod)
 
 
 

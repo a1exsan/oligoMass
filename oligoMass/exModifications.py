@@ -8,7 +8,7 @@ class exModifDB():
     def get_mod_properties(self, mod_code):
         pass
 
-class exModifDBtest(exModifDB):
+class exModifDataFrame(exModifDB):
     def __init__(self):
         super().__init__()
 
@@ -21,7 +21,16 @@ class exModifDBtest(exModifDB):
         self.data = self.data.set_index('code')
 
     def get_mod_properties(self, mod_code):
-        if mod_code in self.data['code']:
-            for d in self.data:
-                if mod_code == '5Phos':
-                    pass
+        if mod_code in self.data.index:
+            return self.data.loc[mod_code].to_dict()
+        else:
+            return {'mass': 0}
+
+
+def test():
+    db = exModifDataFrame()
+    print(db.data.loc['5Phos'].to_dict())
+    print(db.get_mod_properties('5Phos'))
+
+if __name__ == '__main__':
+    test()
