@@ -58,17 +58,33 @@ class oligoSequence():
 class oligoNASequence(oligoSequence):
     def __init__(self, sequence):
         super().__init__(sequence)
-        self.alphabet = 'A G C T U a g c t u'.split(' ')
+        self.is_mixed = False
+        self.alphabet = 'A G C T U a g c t u R Y M K ' \
+                        'S W H B V D N'.split(' ')
+        self.mixed_alphabet = 'R Y M K ' \
+                        'S W H B V D N'.split(' ')
+
         self.modifications = oligoNAModifications()
         self.sequence_parser()
 
         self.dnaDB = dna.deoxynusleosideDB()
+
+    def set_mixed_na(self):
+        self.mixed_na = {}
+        self.mixed_na['R'], self.mixed_na['Y'] = ['A', 'G'], ['C', 'T']
+        self.mixed_na['M'], self.mixed_na['K'] = ['A', 'C'], ['G', 'T']
+        self.mixed_na['S'], self.mixed_na['W'] = ['C', 'G'], ['A', 'T']
+        self.mixed_na['H'], self.mixed_na['B'] = ['A', 'C', 'T'], ['C', 'G', 'T']
+        self.mixed_na['V'], self.mixed_na['D'] = ['A', 'C', 'G'], ['A', 'G', 'T']
+        self.mixed_na['N'] = ['A', 'C', 'T', 'G']
 
     def sequence_parser(self):
         seq_list = list(self.init_seq)
         self.seq = ''
         for letter in seq_list:
             if letter in self.alphabet and not self.modifications.modRead:
+                if letter in self.mixed_alphabet:
+                    self.is_mixed = True
                 self.seq += letter.upper()
             else:
                 self.modifications._add_mod(letter)
@@ -76,18 +92,25 @@ class oligoNASequence(oligoSequence):
 
     def getMolecularFormula(self):
         f = ''
-        for n in self.seq:
-            f += self.dnaDB(n).seqformula
-        for n in range(len(self.seq) - 1):
-            f += 'HPO2'
-        f += 'H2'
-        return self.modifications._get_mod_formula(f)
+        if not self.is_mixed:
+            for n in self.seq:
+                f += self.dnaDB(n).seqformula
+            f += f'(HPO2){len(self.seq) - 1}H2'
+            return self.modifications._get_mod_formula(f)
+        else:
+            return f
 
     def getMonoMass(self):
-        return mm.Formula(self.getMolecularFormula()).isotope
+        if not self.is_mixed:
+            return mm.Formula(self.getMolecularFormula()).isotope
+        else:
+            return 0
 
     def getAvgMass(self):
-        return mm.Formula(self.getMolecularFormula()).mass
+        if not self.is_mixed:
+            return mm.Formula(self.getMolecularFormula()).mass
+        else:
+            return 0
 
 
 def test():
@@ -112,6 +135,10 @@ def test():
     print(seq.getMolMass())
 
     print(seq.getMolMass() - olig2.getAvgMass())
+
+    o1 = oligoNASequence('GTAR')
+    print(o1.getMolecularFormula())
+    print(o1.getAvgMass())
 
 
 
