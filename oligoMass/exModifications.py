@@ -13,9 +13,14 @@ class exModifDataFrame(exModifDB):
         super().__init__()
 
         self.data = {'code': [], 'mass': [], 'ext_cf': []}
+
         self.data['code'].append('5Phos')
-        self.data['mass'].append(80)
+        self.data['mass'].append(80.)
         self.data['ext_cf'].append(0)
+
+        self.data['code'].append('iFluorT')
+        self.data['mass'].append(816.7)
+        self.data['ext_cf'].append(13700)
 
         self.data = pd.DataFrame(self.data)
         self.data = self.data.set_index('code')

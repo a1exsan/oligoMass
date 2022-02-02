@@ -148,7 +148,6 @@ def test():
     print(olig1.getMolecularFormula())
     print(olig1.getAvgMass())
 
-
     sequence = '+A*AAUut+tcrgmG*'
 
     olig2 = oligoNASequence(sequence)
@@ -164,7 +163,7 @@ def test():
 
     print(seq.getMolMass() - olig2.getAvgMass())
 
-    o1 = oligoNASequence('GT}5Phos{AG')
+    o1 = oligoNASequence('GTA/iFluorT/G')
     print(o1.getMolecularFormula())
     print(o1.getAvgMass())
     print(o1.modifications.ex_mod)
@@ -173,6 +172,8 @@ def test():
     print(o2.getMolecularFormula())
     print(o2.getAvgMass())
     print(o2.modifications.ex_mod)
+
+    print(o1.getAvgMass() - o2.getAvgMass())
 
 
 
