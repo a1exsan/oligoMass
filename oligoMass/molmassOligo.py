@@ -1,5 +1,6 @@
 import molmass as mm
 import dna
+import exModifications as exMod
 
 class oligoModifications():
     def __init__(self):
