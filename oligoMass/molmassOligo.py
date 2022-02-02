@@ -18,6 +18,9 @@ class oligoNAModifications(oligoModifications):
 
     def __set_modifications(self):
         self.mod_alphabet = '+ * m r'.split(' ')
+        self.br_alphabet = '/ [ ] { }'.split(' ')
+        self.ex_mod = {}
+        self.ex_mod_key = ''
 
         self.mod_formula = {}
         self.mod_formula['+'] = ['CO', '']
@@ -30,9 +33,25 @@ class oligoNAModifications(oligoModifications):
             self.mod_list[k] = 0
 
     def _add_mod(self, letter):
-        if letter in self.mod_alphabet:
-            self.modRead = False
-            self.mod_list[letter] += 1
+        if not self.modRead:
+            if letter in self.mod_alphabet:
+                self.modRead = False
+                self.mod_list[letter] += 1
+
+            elif letter in self.br_alphabet:
+                if not self.modRead:
+                    self.modRead = True
+                    self.ex_mod_key = ''
+        else:
+            if letter in self.br_alphabet:
+                self.modRead = False
+                if self.ex_mod_key in list(self.ex_mod.keys()):
+                    self.ex_mod[self.ex_mod_key] += 1
+                else:
+                    self.ex_mod[self.ex_mod_key] = 1
+            else:
+                self.ex_mod_key += letter
+
 
     def _get_mod_formula(self, formula):
         f_mod, f_ = '', ''
@@ -136,9 +155,10 @@ def test():
 
     print(seq.getMolMass() - olig2.getAvgMass())
 
-    o1 = oligoNASequence('GTAR')
+    o1 = oligoNASequence('GT}test_mod{AR')
     print(o1.getMolecularFormula())
     print(o1.getAvgMass())
+    print(o1.modifications.ex_mod)
 
 
 
