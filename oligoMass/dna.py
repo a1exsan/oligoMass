@@ -198,6 +198,7 @@ class oligoSeq():
 
     def getAvgMass(self):
         return mm.Formula(self.getMolecularFormula()).mass
+    
 
 
 def test():
