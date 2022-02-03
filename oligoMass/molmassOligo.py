@@ -1,4 +1,6 @@
 import molmass as mm
+import pandas as pd
+
 import oligoMass.dna as dna
 import oligoMass.exModifications as exMod
 
@@ -23,6 +25,7 @@ class oligoNAModifications(oligoModifications):
         self.br_alphabet = '/ [ ] { }'.split(' ')
         self.ex_mod = {}
         self.ex_mod_key = ''
+        self.last_mod = ''
 
         self.mod_formula = {}
         self.mod_formula['+'] = ['CO', '']
@@ -39,11 +42,11 @@ class oligoNAModifications(oligoModifications):
             if letter in self.mod_alphabet:
                 self.modRead = False
                 self.mod_list[letter] += 1
+                self.last_mod = letter
 
             elif letter in self.br_alphabet:
-                if not self.modRead:
-                    self.modRead = True
-                    self.ex_mod_key = ''
+                self.modRead = True
+                self.ex_mod_key = ''
         else:
             if letter in self.br_alphabet:
                 self.modRead = False
@@ -51,6 +54,7 @@ class oligoNAModifications(oligoModifications):
                     self.ex_mod[self.ex_mod_key] += 1
                 else:
                     self.ex_mod[self.ex_mod_key] = 1
+                self.last_mod = f'[{self.ex_mod_key}]'
             else:
                 self.ex_mod_key += letter
 
@@ -77,6 +81,7 @@ class oligoNAModifications(oligoModifications):
 class oligoSequence():
     def __init__(self, sequence):
         self.init_seq = sequence
+        self.sequence = sequence
         self.seq = None
         self.alphabet = None
 
@@ -106,16 +111,43 @@ class oligoNASequence(oligoSequence):
         self.mixed_na['V'], self.mixed_na['D'] = ['A', 'C', 'G'], ['A', 'G', 'T']
         self.mixed_na['N'] = ['A', 'C', 'T', 'G']
 
+    def __getSeqFromTab(self):
+        seq = ''
+        if not self._seqtab.empty:
+            for p in self._seqtab.values:
+                seq += p[0]
+                seq += p[1]
+                seq += p[2]
+        return seq
+
     def sequence_parser(self):
+        self._seqtab = {'prefix': [],
+                        'nt': [],
+                        'suffix': [],
+                        'index': []}
         seq_list = list(self.init_seq)
         self.seq = ''
+        index = 1
         for letter in seq_list:
             if letter in self.alphabet and not self.modifications.modRead:
                 if letter in self.mixed_alphabet:
                     self.is_mixed = True
                 self.seq += letter.upper()
+                self._seqtab['nt'].append(self.seq[-1])
+                self._seqtab['suffix'].append('')
+                self._seqtab['prefix'].append(self.modifications.last_mod)
+                self._seqtab['index'].append(index)
+                self.modifications.last_mod = ''
+                index += 1
             else:
                 self.modifications._add_mod(letter)
+                if self.modifications.last_mod in ['*']:
+                    self._seqtab['suffix'][-1] = self.modifications.last_mod
+                    self.modifications.last_mod = ''
+
+        self._seqtab = pd.DataFrame(self._seqtab)
+        self._seqtab.set_index('index', inplace=True)
+        self.sequence = self.__getSeqFromTab()
         return self.seq
 
     def getMolecularFormula(self):
@@ -175,7 +207,15 @@ def test():
 
     print(o1.getAvgMass() - o2.getAvgMass())
 
+def test2():
+    o1 = oligoNASequence('+G*TrCmA+TTTGGG{iFluorT}CC*++AA*')
+
+    print(o1._seqtab)
+    print(o1.sequence)
+    print(o1.init_seq)
+    print(o1.seq)
+
 
 
 if __name__ == '__main__':
-    test()
+    test2()
