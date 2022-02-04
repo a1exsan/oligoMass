@@ -111,6 +111,10 @@ class oligoSequence():
     def sequence_parser(self):
         return self.init_seq
 
+    def size(self):
+        if self.seq != None:
+            return len(self.seq)
+
 class oligoNASequence(oligoSequence):
     def __init__(self, sequence):
         super().__init__(sequence)
@@ -175,6 +179,23 @@ class oligoNASequence(oligoSequence):
         self.modifications.reset_modif(self._seqtab)
         return self.sequence
 
+    def __call__(self):
+        return self.sequence
+
+    def getPrefix(self, index):
+        seq = ''
+        if index < self._seqtab.shape[0]:
+            for i in range(1, index + 1):
+                seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
+        return oligoNASequence(seq)
+
+    def getSuffix(self, index):
+        seq = ''
+        if index < self._seqtab.shape[0]:
+            for i in range(index + 1, self._seqtab.shape[0] + 1):
+                seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
+        return oligoNASequence(seq)
+
     def reset_modifications(self):
         self.modifications.reset_modif(self._seqtab)
 
@@ -183,7 +204,8 @@ class oligoNASequence(oligoSequence):
         if not self.is_mixed:
             for n in self.seq:
                 f += self.dnaDB(n).seqformula
-            f += f'(HPO2){len(self.seq) - 1}H2'
+            if len(self.seq) > 1:
+                f += f'(HPO2){len(self.seq) - 1}H2'
             return self.modifications._get_mod_formula(f)
         else:
             return f
@@ -249,7 +271,16 @@ def test2():
     print(o1.modifications.mod_list)
     print(o1.getAvgMass())
 
+def test3():
+    o1 = oligoNASequence('AG+TrCATTT/iFluorT/GGGC')
+    print(o1())
+    for i in range(1, o1.size()):
+        p = o1.getPrefix(i)
+        s = o1.getSuffix(i)
+        print(p(), s(), p.getAvgMass(), s.getAvgMass())
+
+
 
 
 if __name__ == '__main__':
-    test2()
+    test3()
