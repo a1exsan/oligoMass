@@ -1,9 +1,11 @@
-README.rst
+README.md
 pyproject.toml
 setup.cfg
 setup.py
 oligoMass/__init__.py
 oligoMass/dna.py
+oligoMass/exModifications.py
+oligoMass/molmassOligo.py
 oligoMass.egg-info/PKG-INFO
 oligoMass.egg-info/SOURCES.txt
 oligoMass.egg-info/dependency_links.txt

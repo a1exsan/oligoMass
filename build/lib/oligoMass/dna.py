@@ -97,6 +97,7 @@ class deoxynusleosideDB():
 
 class oligoSeq():
     def __init__(self, s):
+        self.init_str = s
         self.seq = None
         self.modifications_dict = None
         self.mod_formula = None
@@ -110,13 +111,15 @@ class oligoSeq():
     def set_modifications(self):
         self.modifications_dict = {}
         self.modifications_dict['LNA'] = '+ '
-        # self.modifications['tio'] = '* '
+        self.modifications_dict['tio'] = '* '
         self.modifications_dict['methyl'] = 'm '
+        self.modifications_dict['ribo'] = 'r '
 
         self.mod_formula = {}
-        self.mod_formula['LNA'] = 'CO'
-        # self.mod_formula['tio'] = 'O'
-        self.mod_formula['methyl'] = 'CH2'
+        self.mod_formula['LNA'] = ['CO', '']
+        self.mod_formula['tio'] = ['S', 'O']
+        self.mod_formula['methyl'] = ['OCH2', '']
+        self.mod_formula['ribo'] = ['O', '']
 
         self.modifications = {}
         for k in self.modifications_dict.keys():
@@ -126,14 +129,14 @@ class oligoSeq():
         ll = list(s)
         out = ''
         for l in ll:
-            if l in 'A C G T a c g t'.split(' '):
+            if l in 'A C G T U a c g t u'.split(' '):
                 out += l.upper()
             for k in self.modifications_dict.keys():
                 if l in self.modifications_dict[k].split(' '):
                     self.modifications[k] += 1
         return out
 
-    def string2seq_alpha(self, s, alpha='A C G T a c g t'):
+    def string2seq_alpha(self, s, alpha='A C G T U a c g t u'):
         ll = list(s)
         out = ''
         for l in ll:
@@ -145,14 +148,13 @@ class oligoSeq():
         return out
 
     def seq_end_cut(self, s, cut_number=1, end_type="5'"):
-        seq = list(self.string2seq_alpha(s, alpha='A C G T +'))
+        seq = list(self.string2seq_alpha(s, alpha='A C G T a c g t +'))
         if end_type == "5'":
             for i in range(cut_number):
                 if seq[0] in ['+']:
                     seq.pop(0)
                 if seq[0] in 'A C G T'.split(' '):
                     seq.pop(0)
-            #print(seq)
 
         if end_type == "3'":
             for i in range(cut_number):
@@ -160,9 +162,19 @@ class oligoSeq():
                     seq.pop(-1)
                 if seq[-1] in ['+']:
                     seq.pop(-1)
-            #print(seq)
 
         return ''.join(seq)
+
+    def __get_mod_formula(self, formula):
+        f_mod, f_ = '', ''
+        for k in self.modifications.keys():
+            for i in range(self.modifications[k]):
+                f_mod += self.mod_formula[k][0]
+                f_ += self.mod_formula[k][1]
+        if f_ != '':
+            return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
+        else:
+            return (mm.Formula(formula) + mm.Formula(f_mod)).empirical
 
     def getBruttoFormula(self):
         f = ''
@@ -171,18 +183,22 @@ class oligoSeq():
         for n in range(len(self.seq) - 1):
             f += 'HPO2'
         f += 'H2'
+        return self.__get_mod_formula(f)
 
-        # Append modifications atoms
-        f_mod = ''
-        for k in self.modifications.keys():
-            for i in range(self.modifications[k]):
-                f_mod += self.mod_formula[k]
-
-        bf = mm.Formula(f + f_mod)
-        return bf.empirical
+    def getMolecularFormula(self):
+        f = mm.Formula(self.seq) - mm.Formula('HPO3')
+        f = f.empirical
+        return self.__get_mod_formula(f)
 
     def getMolMass(self):
         return mm.Formula(self.getBruttoFormula()).mass
+
+    def getMonoMass(self):
+        return mm.Formula(self.getMolecularFormula()).isotope
+
+    def getAvgMass(self):
+        return mm.Formula(self.getMolecularFormula()).mass
+
 
 
 def test():
@@ -190,13 +206,13 @@ def test():
     f = mm.Formula('CO') + mm.Formula('CO')
     print(f.empirical)
 
-    seq = oligoSeq('ACTG+GG+TC')
+    seq = oligoSeq('AAAU')
     print(seq.getMolMass())
     print(seq.getBruttoFormula())
 
-    f = mm.Formula('ACTGGGTC')
-    print(f.empirical)
-    print(f.mass)
+    #f = mm.Formula('ACTGGGTC')
+    #print(f.empirical)
+    #print(f.mass)
 
     #dna = osa.dnaSeq('ACT+GGG+TC')
     #print(dna.getBruttoFormula())
