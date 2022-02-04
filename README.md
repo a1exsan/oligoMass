@@ -13,12 +13,13 @@ from Repository on GitHub:
 from PyPi:
 
 `pip install oligoMass -U`
+https://pypi.org/project/oligoMass/
 
 Getting started
 ===============
 
-#### 1) Calculate average and monoisotopic molecular weight of any deoxyoligonucleotides sequenses consists of 
-####five type bases: dA, dT, dG, dC, dU
+#### 1) Calculate average and monoisotopic molecular weight of any deoxyoligonucleotide sequense consists of 
+#### five type bases: dA, dT, dG, dC, dU
 
 `from oligoMass.molmassOligo import oligoNASequence`
 
@@ -31,7 +32,7 @@ Getting started
 `print(f"monoMW: {oligoNASequence('ATGCC').getMonoMass()}")`
 
 #### 2) Calculate average and monoisotopic molecular weight of some deoxyoligonucleotide modifications 
-####such as: LNA(+), ribo(r), 2'-O-Me (m) or Phosphorothioated DNA bases as entered (*)
+#### such as: LNA(+), ribo(r), 2'-O-Me (m) or Phosphorothioated DNA bases as entered (*)
 
 `print(f" MW: {oligoNASequence('+ATrG+CCmG*GTuu+gtU').getMonoMass()}")`
 
