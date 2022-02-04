@@ -37,6 +37,29 @@ class oligoNAModifications(oligoModifications):
         for k in self.mod_formula.keys():
             self.mod_list[k] = 0
 
+    def reset_modif(self, df):
+        #add prefix modifications
+        self.mod_list, self.ex_mod = {}, {}
+        for m in df[df['prefix'] != '']['prefix']:
+            if m in self.mod_alphabet:
+                if m in list(self.mod_list.keys()):
+                    self.mod_list[m] += 1
+                else:
+                    self.mod_list[m] = 1
+            else:
+                m = m[1:-1]
+                if m in list(self.ex_mod.keys()):
+                    self.ex_mod[m] += 1
+                else:
+                    self.ex_mod[m] = 1
+        # add suffix modifications
+        for m in df[df['suffix'] != '']['suffix']:
+            if m in list(self.mod_list.keys()):
+                self.mod_list[m] += 1
+            else:
+                self.mod_list[m] = 1
+
+
     def _add_mod(self, letter):
         if not self.modRead:
             if letter in self.mod_alphabet:
@@ -148,7 +171,12 @@ class oligoNASequence(oligoSequence):
         self._seqtab = pd.DataFrame(self._seqtab)
         self._seqtab.set_index('index', inplace=True)
         self.sequence = self.__getSeqFromTab()
-        return self.seq
+
+        self.modifications.reset_modif(self._seqtab)
+        return self.sequence
+
+    def reset_modifications(self):
+        self.modifications.reset_modif(self._seqtab)
 
     def getMolecularFormula(self):
         f = ''
@@ -214,6 +242,12 @@ def test2():
     print(o1.sequence)
     print(o1.init_seq)
     print(o1.seq)
+
+    print(o1.getAvgMass())
+    print(o1.modifications.mod_list)
+    o1.reset_modifications()
+    print(o1.modifications.mod_list)
+    print(o1.getAvgMass())
 
 
 
