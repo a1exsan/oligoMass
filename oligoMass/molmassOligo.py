@@ -108,13 +108,31 @@ class oligoNAModifications(oligoModifications):
                         f_mod += f'(H){mass - delta}'
                 else:
                     try:
-                        mm.Formula(key)
-                        f_mod += f"({key}){self.ex_mod[key]}"
+                        sep1, sep2 = key.find(';'), key.find('|')
+                        sep = -1
+                        if sep1 != -1:
+                            sep = sep1
+                        elif sep2 != -1:
+                            sep = sep2
+
+                        if sep != -1:
+                            key_p, key_m = key[: sep], key[sep+1 :]
+                            mm.Formula(key_p)
+                            mm.Formula(key_m)
+                            if key_p != '':
+                                f_mod += f"({key_p}){self.ex_mod[key]}"
+                            if key_m != '':
+                                f_ += f"({key_m}){self.ex_mod[key]}"
+                        else:
+                            mm.Formula(key)
+                            f_mod += f"({key}){self.ex_mod[key]}"
                     except Exception as e:
                         print(e)
 
-        if f_ != '':
+        if f_ != '' and f_mod != '':
             return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
+        elif f_ != '':
+            return (mm.Formula(formula) - mm.Formula(f_)).empirical
         else:
             return (mm.Formula(formula) + mm.Formula(f_mod)).empirical
 
@@ -312,11 +330,20 @@ def test4():
     print(o3.sequence)
     print(o3.getMolecularFormula())
 
-    o4 = oligoNASequence('AT/CH2]GC')
+    o4 = oligoNASequence('ATGC')
     print(o4.getAvgMass())
     print(o4.sequence)
     print(o4.getMolecularFormula())
 
+    o4 = oligoNASequence('ATG*C')
+    print(o4.getAvgMass())
+    print(o4.sequence)
+    print(o4.getMolecularFormula())
+
+    o5 = oligoNASequence('AT[Se;]GC')
+    print(o5.getAvgMass())
+    print(o5.sequence)
+    print(o5.getMolecularFormula())
 
 
 
