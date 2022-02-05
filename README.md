@@ -46,6 +46,10 @@ Getting started
 
 `print(f" MW: {oligoNASequence('AT{CH2}GC').getMolecularFormula()} Da")` `# C40H52N15O22P3`
 
+`print(f" MW: {oligoNASequence('AT{S|O}GC').getMolecularFormula()} Da")` `# C39H50N15O21P3S`
+
+that equal ('AT{S|O}GC' == 'ATG*C')
+
 `print(f" MW: {oligoNASequence('AT[CH2]GC').getMonoMass()} Da")` `#1187.85 Da`
 
 `print(f" MW: {oligoNASequence('AT/CH2/GC').getMonoMass()} Da")` `#1187.85 Da`
