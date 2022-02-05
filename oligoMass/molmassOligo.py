@@ -89,13 +89,30 @@ class oligoNAModifications(oligoModifications):
                 f_mod += f'({self.mod_formula[k][0]}){self.mod_list[k]}'
                 if self.mod_formula[k][1] != '':
                     f_ += f'({self.mod_formula[k][1]}){self.mod_list[k]}'
+
         if len(list(self.ex_mod)) > 0:
             for key in self.ex_mod.keys():
-                mass = int(round(self.ex_mod[key]*self.exModDB.get_mod_properties(key)['mass'], 0))
-                if mass > 0:
-                    delta = int(round(0.007941*mass, 0))
-                    f_mod += f'(H){mass - delta}'
-                    #print(f_mod, mass, delta, 0.007941*mass)
+                db_key = self.exModDB.get_mod_properties(key)
+                if db_key['in_base']:
+                    mass = int(round(self.ex_mod[key]*db_key['mass'], 0))
+                    formula_p = f"({db_key['formula+']}){self.ex_mod[key]}"
+                    formula_m = f"({db_key['formula-']}){self.ex_mod[key]}"
+
+                    if db_key['formula-'] != '':
+                        f_ += formula_m
+
+                    if db_key['formula+'] != '':
+                        f_mod += formula_p
+                    elif mass > 0:
+                        delta = int(round(0.007941*mass, 0))
+                        f_mod += f'(H){mass - delta}'
+                else:
+                    try:
+                        mm.Formula(key)
+                        f_mod += f"({key}){self.ex_mod[key]}"
+                    except Exception as e:
+                        print(e)
+
         if f_ != '':
             return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
         else:
@@ -258,7 +275,7 @@ def test():
     print(o1.getAvgMass() - o2.getAvgMass())
 
 def test2():
-    o1 = oligoNASequence('+G*TrCmA+TTTGGG{iFluorT}CC*++AA*')
+    o1 = oligoNASequence('+G*TrCmA+TTTGGG{iFluorT}+CC*++AA*')
 
     print(o1._seqtab)
     print(o1.sequence)
@@ -279,8 +296,24 @@ def test3():
         s = o1.getSuffix(i)
         print(p(), s(), p.getAvgMass(), s.getAvgMass())
 
+def test4():
+    o1 = oligoNASequence('CGTCTAG[+m]CCATGG[+m]CGTTA')
+    print(o1.getAvgMass())
+    print(o1.sequence)
+    print(o1.getMolecularFormula())
+
+    o2 = oligoNASequence('CGTCTAGCCATGGCGTTA')
+    print(o2.getAvgMass())
+    print(o2.sequence)
+    print(o2.getMolecularFormula())
+
+    o3 = oligoNASequence('CGTCT{C2H2O}AGCC{C2H2O}ATGGCGTTA')
+    print(o3.getAvgMass())
+    print(o3.sequence)
+    print(o3.getMolecularFormula())
+
 
 
 
 if __name__ == '__main__':
-    test3()
+    test4()
