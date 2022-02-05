@@ -36,7 +36,21 @@ Getting started
 
 `print(f" MW: {oligoNASequence('+ATrG+CCmG*GTuu+gtU').getMonoMass()}")`
 
-#### 3) getPrefix(index) and getSuffix(index) methods can return prefix and suffix of the sequence 
+#### 3) Universal sintax to add modifications:
+
+`print(f" MW: {oligoNASequence('ATGC').getMonoMass()} Da")` `#1173.82 Da`
+
+`print(f" MW: {oligoNASequence('ATGC').getMolecularFormula()} Da")` `# C39H50N15O22P3`
+
+`print(f" MW: {oligoNASequence('AT{CH2}GC').getMonoMass()} Da")` `#1187.85 Da`
+
+`print(f" MW: {oligoNASequence('AT{CH2}GC').getMolecularFormula()} Da")` `# C40H52N15O22P3`
+
+`print(f" MW: {oligoNASequence('AT[CH2]GC').getMonoMass()} Da")` `#1187.85 Da`
+
+`print(f" MW: {oligoNASequence('AT/CH2/GC').getMonoMass()} Da")` `#1187.85 Da`
+
+#### 4) getPrefix(index) and getSuffix(index) methods can return prefix and suffix of the sequence 
 
 `print(oligoNASequence('+ATrG+CCmG*GTuu+gtU').getPrefix(index=2)())`
 
@@ -46,7 +60,7 @@ Getting started
 
 `# CmG*GTuu+gtU`
 
-#### 4)Calc extinction coef:
+#### 5)Calc extinction coef:
 
 `from oligoMass import dna`
 

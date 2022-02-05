@@ -312,6 +312,11 @@ def test4():
     print(o3.sequence)
     print(o3.getMolecularFormula())
 
+    o4 = oligoNASequence('AT/CH2]GC')
+    print(o4.getAvgMass())
+    print(o4.sequence)
+    print(o4.getMolecularFormula())
+
 
 
 
