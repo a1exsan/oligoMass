@@ -231,6 +231,14 @@ class oligoNASequence(oligoSequence):
                 seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
         return oligoNASequence(seq)
 
+    def getDeletion(self, index):
+        seq = ''
+        if index < self._seqtab.shape[0]:
+            for i in range(1, self.size() + 1):
+                if i != index:
+                    seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
+        return seq
+
     def reset_modifications(self):
         self.modifications.reset_modif(self._seqtab)
 
@@ -345,7 +353,12 @@ def test4():
     print(o5.sequence)
     print(o5.getMolecularFormula())
 
+def test5():
+    o1 = oligoNASequence('CG+TCTA')
+    for i in range(2, o1.size()):
+        print(o1.getDeletion(i))
+
 
 
 if __name__ == '__main__':
-    test4()
+    test5()
