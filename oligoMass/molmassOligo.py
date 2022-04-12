@@ -4,6 +4,44 @@ import pandas as pd
 import oligoMass.dna as dna
 import oligoMass.exModifications as exMod
 
+class EmpericalFormula():
+
+    def __init__(self, str_formula):
+        self.init_str = str_formula
+        self.formula = self.__convert_formula()
+        self.formula = self.__formuls_to_str()
+
+    def __convert_formula(self):
+        ret = {}
+        for i, v in enumerate(list(self.init_str)):
+            if not v.isdigit():
+                ret[v] = 0
+        value = ''
+        key = ''
+        for v in list(self.init_str):
+            #print([i, v, key, value])
+            if not v.isdigit():
+                if value == '' and key != '':
+                    ret[key] += 1
+                elif value != '' and key != '':
+                    ret[key] += int(value)
+                    value = ''
+                key = v
+            else:
+                value += v
+        if value == '':
+            ret[key] += 1
+        else:
+            ret[key] += int(value)
+
+        return ret
+
+    def __formuls_to_str(self):
+        ret = ''
+        for key in self.formula.keys():
+            ret += key + str(self.formula[key])
+        return ret
+
 class oligoModifications():
     def __init__(self):
         self.modRead = False
@@ -128,13 +166,12 @@ class oligoNAModifications(oligoModifications):
                             f_mod += f"({key}){self.ex_mod[key]}"
                     except Exception as e:
                         print(e)
-
         if f_ != '' and f_mod != '':
             return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
         elif f_ != '':
             return (mm.Formula(formula) - mm.Formula(f_)).empirical
         else:
-            return (mm.Formula(formula) + mm.Formula(f_mod)).empirical
+            return str(mm.Formula(formula))#(mm.Formula(formula) + mm.Formula(f_mod)).empirical
 
 class oligoSequence():
     def __init__(self, sequence):
@@ -247,9 +284,15 @@ class oligoNASequence(oligoSequence):
         if not self.is_mixed:
             for n in self.seq:
                 f += self.dnaDB(n).seqformula
+                #f = mm.Formula(f + self.dnaDB(n).seqformula).empirical
+                #print(n, f)
+            #print(EmpericalFormula(f).formula)
             if len(self.seq) > 1:
-                f += f'(HPO2){len(self.seq) - 1}H2'
-            return self.modifications._get_mod_formula(f)
+                #f += mm.Formula(f'(HPO2){len(self.seq) - 1}H2').empirical
+                num = len(self.seq) - 1
+                f += f'H{num + 2}P{num}O{2*num}'
+                #print(EmpericalFormula(f).formula)
+            return self.modifications._get_mod_formula(EmpericalFormula(f).formula)
         else:
             return f
 
@@ -354,9 +397,14 @@ def test4():
     print(o5.getMolecularFormula())
 
 def test5():
-    o1 = oligoNASequence('CG+TCTA')
-    for i in range(2, o1.size()):
-        print(o1.getDeletion(i))
+    o1 = oligoNASequence('GGAAGGATCTGTATCAAGCCGT')
+
+    print(o1.getAvgMass())
+
+
+    #print(EmpericalFormula('C10N5OH10').formula)
+
+    #print(EmpericalFormula('C10NO15H10N8C18').formula)
 
 
 
