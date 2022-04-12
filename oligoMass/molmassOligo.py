@@ -8,39 +8,66 @@ class EmpericalFormula():
 
     def __init__(self, str_formula):
         self.init_str = str_formula
-        self.formula = self.__convert_formula()
-        self.formula = self.__formuls_to_str()
+        self.dict_formula = self.__convert_formula()
+        self.formula = self.__formuls_to_str(self.dict_formula)
 
     def __convert_formula(self):
         ret = {}
-        for i, v in enumerate(list(self.init_str)):
-            if not v.isdigit():
-                ret[v] = 0
-        value = ''
-        key = ''
-        for v in list(self.init_str):
-            #print([i, v, key, value])
-            if not v.isdigit():
-                if value == '' and key != '':
-                    ret[key] += 1
-                elif value != '' and key != '':
-                    ret[key] += int(value)
-                    value = ''
-                key = v
+        if self.init_str != '':
+            for i, v in enumerate(list(self.init_str)):
+                if not v.isdigit():
+                    ret[v] = 0
+            value = ''
+            key = ''
+            for v in list(self.init_str):
+                #print([i, v, key, value])
+                if not v.isdigit():
+                    if value == '' and key != '':
+                        ret[key] += 1
+                    elif value != '' and key != '':
+                        ret[key] += int(value)
+                        value = ''
+                    key = v
+                else:
+                    value += v
+            if value == '':
+                ret[key] += 1
             else:
-                value += v
-        if value == '':
-            ret[key] += 1
-        else:
-            ret[key] += int(value)
+                ret[key] += int(value)
 
         return ret
 
-    def __formuls_to_str(self):
+    def __formuls_to_str(self, fdict):
         ret = ''
-        for key in self.formula.keys():
-            ret += key + str(self.formula[key])
+        for key in fdict.keys():
+            if fdict[key] > 1:
+                ret += key + str(fdict[key])
+            else:
+                ret += key
         return ret
+
+    def mul(self, mulint):
+        formula = self.__convert_formula()
+        for key in formula.keys():
+            formula[key] *= mulint
+        return self.__formuls_to_str(formula)
+
+    def __add__(self, other):
+        for key in other.dict_formula.keys():
+            if key in list(self.dict_formula.keys()):
+                self.dict_formula[key] += other.dict_formula[key]
+            else:
+                self.dict_formula[key] = other.dict_formula[key]
+        return EmpericalFormula(self.__formuls_to_str(self.dict_formula))
+
+    def __sub__(self, other):
+        for key in other.dict_formula.keys():
+            if key in list(self.dict_formula.keys()):
+                self.dict_formula[key] -= other.dict_formula[key]
+                if self.dict_formula[key] < 0:
+                    self.dict_formula[key] = 0
+        return EmpericalFormula(self.__formuls_to_str(self.dict_formula))
+
 
 class oligoModifications():
     def __init__(self):
@@ -122,11 +149,14 @@ class oligoNAModifications(oligoModifications):
 
     def _get_mod_formula(self, formula):
         f_mod, f_ = '', ''
+        #print(self.mod_list)
         for k in self.mod_list.keys():
             if self.mod_list[k] > 0:
-                f_mod += f'({self.mod_formula[k][0]}){self.mod_list[k]}'
+                #f_mod += f'({self.mod_formula[k][0]}){self.mod_list[k]}'
+                f_mod += EmpericalFormula(self.mod_formula[k][0]).mul(self.mod_list[k])
                 if self.mod_formula[k][1] != '':
-                    f_ += f'({self.mod_formula[k][1]}){self.mod_list[k]}'
+                    #f_ += f'({self.mod_formula[k][1]}){self.mod_list[k]}'
+                    f_ += EmpericalFormula(self.mod_formula[k][1]).mul(self.mod_list[k])
 
         if len(list(self.ex_mod)) > 0:
             for key in self.ex_mod.keys():
@@ -143,7 +173,7 @@ class oligoNAModifications(oligoModifications):
                         f_mod += formula_p
                     elif mass > 0:
                         delta = int(round(0.007941*mass, 0))
-                        f_mod += f'(H){mass - delta}'
+                        f_mod += f'H{mass - delta}'
                 else:
                     try:
                         sep1, sep2 = key.find(';'), key.find('|')
@@ -152,26 +182,31 @@ class oligoNAModifications(oligoModifications):
                             sep = sep1
                         elif sep2 != -1:
                             sep = sep2
-
                         if sep != -1:
                             key_p, key_m = key[: sep], key[sep+1 :]
-                            mm.Formula(key_p)
-                            mm.Formula(key_m)
                             if key_p != '':
-                                f_mod += f"({key_p}){self.ex_mod[key]}"
+                                #print([key_p], self.ex_mod[key])
+                                f_mod += EmpericalFormula(key_p).mul(self.ex_mod[key])
+                                #f_mod += f"{key_p}{self.ex_mod[key]}"
                             if key_m != '':
-                                f_ += f"({key_m}){self.ex_mod[key]}"
+                                #print([key_p])
+                                #f_ += f"{key_m}{self.ex_mod[key]}"
+                                f_ += EmpericalFormula(key_m).mul(self.ex_mod[key])
                         else:
-                            mm.Formula(key)
-                            f_mod += f"({key}){self.ex_mod[key]}"
+                            #print([key], self.ex_mod[key])
+                            f_mod += EmpericalFormula(key).mul(self.ex_mod[key])
+                            #f_mod += f"{key}{self.ex_mod[key]}"
                     except Exception as e:
                         print(e)
+
+        #print(f_, f_mod)
         if f_ != '' and f_mod != '':
-            return (mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
+            return ((EmpericalFormula(formula) + EmpericalFormula(f_mod)) - EmpericalFormula(f_)).formula
+            #(mm.Formula(formula) + mm.Formula(f_mod) - mm.Formula(f_)).empirical
         elif f_ != '':
-            return (mm.Formula(formula) - mm.Formula(f_)).empirical
+            return (EmpericalFormula(formula) - EmpericalFormula(f_mod)).formula#(mm.Formula(formula) - mm.Formula(f_)).empirical
         else:
-            return str(mm.Formula(formula))#(mm.Formula(formula) + mm.Formula(f_mod)).empirical
+            return (EmpericalFormula(formula) + EmpericalFormula(f_mod)).formula#(mm.Formula(formula) + mm.Formula(f_mod)).empirical
 
 class oligoSequence():
     def __init__(self, sequence):
@@ -398,8 +433,12 @@ def test4():
 
 def test5():
     o1 = oligoNASequence('GGAAGGATCTGTATCAAGCCGT')
+    o2 = oligoNASequence('GGAAGG*ATCTGTATCAAGCCGT')
+    o3 = oligoNASequence('GGAAGGA{S|O}TC{S|O}TG{S|O}TATCAAGCCGT')
 
     print(o1.getAvgMass())
+    print(o2.getAvgMass())
+    print(o3.getAvgMass())
 
 
     #print(EmpericalFormula('C10N5OH10').formula)
