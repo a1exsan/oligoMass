@@ -12,29 +12,46 @@ class EmpericalFormula():
         self.formula = self.__formuls_to_str(self.dict_formula)
 
     def __convert_formula(self):
-        ret = {}
-        if self.init_str != '':
-            for i, v in enumerate(list(self.init_str)):
-                if not v.isdigit():
-                    ret[v] = 0
-            value = ''
-            key = ''
-            for v in list(self.init_str):
-                #print([i, v, key, value])
-                if not v.isdigit():
-                    if value == '' and key != '':
-                        ret[key] += 1
-                    elif value != '' and key != '':
-                        ret[key] += int(value)
-                        value = ''
-                    key = v
-                else:
-                    value += v
-            if value == '':
-                ret[key] += 1
-            else:
-                ret[key] += int(value)
 
+        def prepare(init_list):
+            ret = []
+            prev = ''
+            for i in init_list + ['!']:
+
+                if not i.isdigit() and not prev.isdigit() and prev != '':
+                    if i.isupper():
+                        ret.append('1')
+
+                if i != '!':
+                    ret.append(i)
+                else:
+                    if not prev.isdigit() and prev != '':
+                        ret.append('1')
+                prev = i
+
+            return ret
+
+        #print(list(self.init_str))
+        #print(prepare(list(self.init_str)))
+
+        ret = {}
+        key, val = '', ''
+        #print(prepare(list(self.init_str)) + ['!'])
+        for s in prepare(list(self.init_str)) + ['!']:
+            if not s.isdigit():
+                if val != '':
+                    if key in ret.keys():
+                        ret[key] += int(val)
+                    else:
+                        ret[key] = int(val)
+                    key, val = '', ''
+
+                if s.isupper():
+                    key = s
+                else:
+                    key += s
+            else:
+                val += s
         return ret
 
     def __formuls_to_str(self, fdict):
@@ -67,6 +84,9 @@ class EmpericalFormula():
                 if self.dict_formula[key] < 0:
                     self.dict_formula[key] = 0
         return EmpericalFormula(self.__formuls_to_str(self.dict_formula))
+
+    def __str__(self):
+        return self.formula
 
 
 class oligoModifications():
@@ -435,17 +455,83 @@ def test5():
     o1 = oligoNASequence('GGAAGGATCTGTATCAAGCCGT')
     o2 = oligoNASequence('GGAAGG*ATCTGTATCAAGCCGT')
     o3 = oligoNASequence('GGAAGGA{S|O}TC{S|O}TG{S|O}TATCAAGCCGT')
+    o4 = oligoNASequence('GAGCGG')
+
+    #o5 = oligoNASequence('GCATGGTCT{C5N3H10PO}CCCGUAGUGAGUrGrUrUrUrUrArGrUrGrCrUrArGrA')
+    o5 = oligoNASequence('GCATGGTCTCCCGUAGUGAGUrGrUrUrUrUrArGrUrGrCrUrArGrA')
+    o6 = oligoNASequence('rGrCrA rUrGrG rUrCrU rCrCrC rGrUrA rGrUrG rArGrU rGrUrU rUrUrArGrUrGrCrUrArGrA')
 
     print(o1.getAvgMass())
     print(o2.getAvgMass())
     print(o3.getAvgMass())
+
+    print(o4.getAvgMass())
+
+    print(o5.getAvgMass())# - 11080)
+
+    print(o6.getAvgMass())
 
 
     #print(EmpericalFormula('C10N5OH10').formula)
 
     #print(EmpericalFormula('C10NO15H10N8C18').formula)
 
+    #print(mm.Formula('C5N3H10PO').mass)
+
+def test6():
+    FII = 'CATTGAGGCTCGCTGAGAG'
+    oFII = oligoNASequence(FII)
+    print(oFII.getAvgMass())
+
+    print('SIMA + seq', 7182 - 759 - oFII.getAvgMass())
+
+    print(6424 - oFII.getAvgMass())
+    print(7182 - oFII.getAvgMass())
+
+    BHQ1 = EmpericalFormula('C21H18N6O3C4O2H9PO2')
+    print('BHQ', mm.Formula(BHQ1.formula).mass)
+    print('BHQf', BHQ1.formula)
+
+    Ph = EmpericalFormula('H2PO3')
+    print('Ph', mm.Formula(Ph.formula).mass)
+    print('Ph + 759', mm.Formula(Ph.formula).mass + 759)
+
+    SIMA = EmpericalFormula('C42H68N3O9')
+    print('SIMA', mm.Formula(SIMA.formula).mass)
+
+    FV = oligoNASequence('CCTGGACAGGCGAGGAATACAG')
+
+    FAM = EmpericalFormula('C30O8NH36')
+    print('FAM', mm.Formula(FAM.formula).mass)
+    print('7910 - oligomass - FAM', 7910 - FV.getAvgMass() - mm.Formula(FAM.formula).mass)
+    print('FAM oligos BHQ', FV.getAvgMass() + 554 + 566 - 28)
+    print('oligos BHQ', FV.getAvgMass() + 554)
+
+    FV_ = oligoNASequence('{C30O8NH36}CCTGGACAGGCGAGGAATACA{C25H27N6O7P}G')
+    print(FV_.getAvgMass())
+
+    FII_ = oligoNASequence('{C42H68N3O9}CATTGAGGCTCGCTGAGA{C25H27N6O7P}G')
+    print(FII_.getAvgMass())
+
+def test7():
+    f = EmpericalFormula('CP4H11O18Cl4S10Cd11NiN4O')
+    print(f)
+    print(f.dict_formula)
+
+    f = EmpericalFormula('COPFLi')
+    print(f)
+    print(f.dict_formula)
+
+    f = EmpericalFormula('K1Kr2')
+    print(f)
+    print(f.dict_formula)
+
+    f = EmpericalFormula('KKr2KKrOOO3Li1Li2Li')
+    print(f)
+    print(f.dict_formula)
+
+
 
 
 if __name__ == '__main__':
-    test5()
+    test7()
