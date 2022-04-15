@@ -4,6 +4,8 @@ import pandas as pd
 import oligoMass.dna as dna
 import oligoMass.exModifications as exMod
 
+from ElementsTable import Elements
+
 class EmpericalFormula():
 
     def __init__(self, str_formula):
@@ -87,6 +89,24 @@ class EmpericalFormula():
 
     def __str__(self):
         return self.formula
+
+    def __call__(self, *args, **kwargs):
+        return self.formula
+
+    def getAverageWeight(self):
+        mass = 0.
+        if self.dict_formula != {}:
+            for key in self.dict_formula.keys():
+                mass += self.dict_formula[key] * Elements()(key).mass
+        return mass
+
+    def getMonoWeight(self):
+        mass = 0.
+        if self.dict_formula != {}:
+            for key in self.dict_formula.keys():
+                #print(list(Elements()(key).isotopes.values())[0][0])
+                mass += self.dict_formula[key] * list(Elements()(key).isotopes.values())[0][0]
+        return mass
 
 
 class oligoModifications():
@@ -530,8 +550,16 @@ def test7():
     print(f)
     print(f.dict_formula)
 
+def test8():
+    f = EmpericalFormula('C')
+    print(f)
+    print('Avg mass', f.getAverageWeight())
+    print('Mono mass', f.getMonoWeight())
+
+    print(mm.Formula(f()).mass)
+
 
 
 
 if __name__ == '__main__':
-    test7()
+    test8()
