@@ -551,13 +551,34 @@ def test7():
     print(f.dict_formula)
 
 def test8():
-    f = EmpericalFormula('C')
-    print(f)
-    print('Avg mass', f.getAverageWeight())
-    print('Mono mass', f.getMonoWeight())
 
-    print(mm.Formula(f()).mass)
+    import random
 
+    elems = list(Elements().elements.keys())
+
+    N = 500
+    for tests in range(N):
+        mol = ''
+        for i in range(random.randint(1, 20)):
+            index = random.randint(0, len(elems) - 1)
+            mol += elems[index]
+            count = random.randint(1, 101)
+            mol += str(count) if count > 1 else ''
+
+        ref_mass = mm.Formula(mol).mass
+        mass = EmpericalFormula(mol).getAverageWeight()
+        #print(mass, ref_mass)
+        assert abs(mass - ref_mass) < 0.1
+    print('Test Done')
+    print(f'500 random molecules was tried')
+
+
+    #f = EmpericalFormula('C')
+    #print(f)
+    #print('Avg mass', f.getAverageWeight())
+    #print('Mono mass', f.getMonoWeight())
+
+    #print(mm.Formula(f()).mass)
 
 
 

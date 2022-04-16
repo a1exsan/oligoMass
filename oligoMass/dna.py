@@ -218,5 +218,9 @@ def test():
     #print(dna.getBruttoFormula())
     #print(dna.getMolMass())
 
+def test1():
+    extinction = get_simple_ssdna_extinction("CGAAGGTGTGACTTCCATG", get_extinction_dict())
+    print(extinction)
+
 if __name__ == '__main__':
-    test()
+    test1()
