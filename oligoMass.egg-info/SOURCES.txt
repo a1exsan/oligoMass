@@ -2,6 +2,7 @@ README.md
 pyproject.toml
 setup.cfg
 setup.py
+oligoMass/ElementsTable.py
 oligoMass/__init__.py
 oligoMass/dna.py
 oligoMass/exModifications.py
