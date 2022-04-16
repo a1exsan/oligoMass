@@ -44,6 +44,36 @@ class exModifDataFrame(exModifDB):
         self.data['formula+'].append('S')
         self.data['formula-'].append('O')
 
+        self.data['code'].append('6FAM')
+        self.data['mass'].append(538)
+        self.data['ext_cf'].append(0)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('56-FAM')
+        self.data['mass'].append(537)
+        self.data['ext_cf'].append(0)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('SIMA')
+        self.data['mass'].append(759)
+        self.data['ext_cf'].append(0)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('BHQ1')
+        self.data['mass'].append(0)
+        self.data['ext_cf'].append(0)
+        self.data['formula+'].append('C21H18N6O3C4O2H9PO2')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('3BHQ_1')
+        self.data['mass'].append(0)
+        self.data['ext_cf'].append(0)
+        self.data['formula+'].append('C21H18N6O3C4O2H9PO2')
+        self.data['formula-'].append('')
+
         self.data = pd.DataFrame(self.data)
         self.data = self.data.set_index('code')
 
