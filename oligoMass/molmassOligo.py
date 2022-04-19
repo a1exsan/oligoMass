@@ -194,35 +194,16 @@ class oligoNAModifications(oligoModifications):
 
 
     def _get_mod_formula(self, formula):
-        #f_mod, f_ = '', ''
         ff = EmpericalFormula(formula)
         for k in self.mod_list.keys():
             if self.mod_list[k] > 0:
-                #f_mod += EmpericalFormula(self.mod_formula[k][0]).mul(self.mod_list[k])
                 ff += EmpericalFormula(self.mod_formula[k][0]) * self.mod_list[k]
                 if self.mod_formula[k][1] != '':
-                    #f_ += EmpericalFormula(self.mod_formula[k][1]).mul(self.mod_list[k])
                     ff -= EmpericalFormula(self.mod_formula[k][1]) * self.mod_list[k]
-
         if len(list(self.ex_mod)) > 0:
             for key in self.ex_mod.keys():
                 db_key = self.exModDB.get_mod_properties(key)
                 if db_key['in_base']:
-                    """
-                    mass = int(round(self.ex_mod[key]*db_key['mass'], 0))
-                    formula_p = f"({db_key['formula+']}){self.ex_mod[key]}"
-                    formula_m = f"({db_key['formula-']}){self.ex_mod[key]}"
-
-                    if db_key['formula-'] != '':
-                        f_ += formula_m
-
-                    if db_key['formula+'] != '':
-                        f_mod += formula_p
-                    elif mass > 0:
-                        delta = int(round(0.007941*mass, 0))
-                        f_mod += f'H{mass - delta}'
-                    """
-
                     if db_key['formula-'] != '':
                         ff -= EmpericalFormula(db_key['formula-']) * self.ex_mod[key]
                     if db_key['formula+'] != '':
@@ -231,7 +212,6 @@ class oligoNAModifications(oligoModifications):
                         mass = int(round(self.ex_mod[key] * db_key['mass'], 0))
                         delta = int(round(0.007941 * mass, 0))
                         ff += EmpericalFormula(f'H{mass - delta}')
-
                 else:
                     try:
                         sep1, sep2 = key.find(';'), key.find('|')
@@ -243,32 +223,15 @@ class oligoNAModifications(oligoModifications):
                         if sep != -1:
                             key_p, key_m = key[: sep], key[sep+1 :]
                             if key_p != '':
-
-                                #f_mod += EmpericalFormula(key_p).mul(self.ex_mod[key])
                                 ff += EmpericalFormula(key_p) * self.ex_mod[key]
-
                             if key_m != '':
-
-                                #f_ += EmpericalFormula(key_m).mul(self.ex_mod[key])
                                 ff -= EmpericalFormula(key_m) * self.ex_mod[key]
                         else:
-
-                            #f_mod += EmpericalFormula(key).mul(self.ex_mod[key])
                             ff += EmpericalFormula(key) * self.ex_mod[key]
 
                     except Exception as e:
                         print(e)
-
         return ff()
-
-"""
-        if f_ != '' and f_mod != '':
-            return ((EmpericalFormula(formula) + EmpericalFormula(f_mod)) - EmpericalFormula(f_)).formula
-        elif f_ != '':
-            return (EmpericalFormula(formula) - EmpericalFormula(f_mod)).formula#(mm.Formula(formula) - mm.Formula(f_)).empirical
-        else:
-            return (EmpericalFormula(formula) + EmpericalFormula(f_mod)).formula#(mm.Formula(formula) + mm.Formula(f_mod)).empirical
-"""
 
 
 class oligoSequence():
@@ -389,31 +352,31 @@ class oligoNASequence(oligoSequence):
         if not self.is_mixed:
             for n in self.seq:
                 f += self.dnaDB(n).seqformula
-                #f = mm.Formula(f + self.dnaDB(n).seqformula).empirical
-                #print(n, f)
-            #print(EmpericalFormula(f).formula)
             if len(self.seq) > 1:
-                #f += mm.Formula(f'(HPO2){len(self.seq) - 1}H2').empirical
                 num = len(self.seq) - 1
                 f += f'H{num + 2}P{num}O{2*num}'
-                #print(EmpericalFormula(f).formula)
             return self.modifications._get_mod_formula(EmpericalFormula(f)())
         else:
             return f
 
     def getMonoMass(self):
         if not self.is_mixed:
-            #return mm.Formula(self.getMolecularFormula()).isotope
             return EmpericalFormula(self.molecularFormula).getMonoWeight()
         else:
             return 0
 
     def getAvgMass(self):
         if not self.is_mixed:
-            #return mm.Formula(self.getMolecularFormula()).mass
             return EmpericalFormula(self.molecularFormula).getAverageWeight()
         else:
             return 0
+
+    def getExtinction(self):
+        base_extinction = dna.get_simple_ssdna_extinction(''.join(list(self._seqtab['nt'])), dna.get_extinction_dict())
+        for key in self.modifications.ex_mod.keys():
+            base_extinction += self.modifications.exModDB.get_mod_properties(key)['ext_cf'] * \
+                               self.modifications.ex_mod[key]
+        return base_extinction
 
 
 def test():
@@ -631,6 +594,9 @@ def test9():
     ext = dna.get_simple_ssdna_extinction("TTT TTT TTT TTT TTT TTT", dna.get_extinction_dict())
     print(ext)
     print(49*1e6 / ext)
+
+    o1 = oligoNASequence('{6FAM}TTT TTT TTT TTT TTT TT{BHQ1}T')
+    print(o1.getExtinction())
 
 
 if __name__ == '__main__':
