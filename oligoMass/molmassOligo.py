@@ -4,7 +4,7 @@ import pandas as pd
 import oligoMass.dna as dna
 import oligoMass.exModifications as exMod
 
-from ElementsTable import Elements
+from oligoMass.ElementsTable import Elements
 
 class EmpericalFormula():
 
@@ -626,6 +626,11 @@ def test9():
     print(oligoNASequence('/56-FAM/GGA AGG ATC TGT ATC AAG CCG T').getAvgMass())
     print(oligoNASequence('GGA AGG ATC TGT ATC AAG CCG /3BHQ_1/ T').getAvgMass())
     print(oligoNASequence('/SIMA/ GGA AGG ATC TGT ATC AAG CCG /3BHQ_1/ T').getAvgMass())
+
+def test9():
+    ext = dna.get_simple_ssdna_extinction("TTT TTT TTT TTT TTT TTT", dna.get_extinction_dict())
+    print(ext)
+    print(49*1e6 / ext)
 
 
 if __name__ == '__main__':
