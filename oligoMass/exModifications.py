@@ -83,7 +83,7 @@ class exModifDataFrame(exModifDB):
         if mod_code in self.data.index:
             return self.data.loc[mod_code].to_dict()
         else:
-            return {'mass': 0, 'formula+': '', 'formula-': '', 'in_base': False}
+            return {'mass': 0, 'ext_cf': 0, 'formula+': '', 'formula-': '', 'in_base': False}
 
 
 def test():

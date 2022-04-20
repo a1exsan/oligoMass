@@ -1,4 +1,4 @@
-import molmass as mm
+#import molmass as mm
 import pandas as pd
 
 import oligoMass.dna as dna
@@ -493,6 +493,7 @@ def test5():
 
     #print(mm.Formula('C5N3H10PO').mass)
 
+"""
 def test6():
     FII = 'CATTGAGGCTCGCTGAGAG'
     oFII = oligoNASequence(FII)
@@ -527,7 +528,7 @@ def test6():
 
     FII_ = oligoNASequence('{C42H68N3O9}CATTGAGGCTCGCTGAGA{C25H27N6O7P}G')
     print(FII_.getAvgMass())
-
+"""
 def test7():
     f = EmpericalFormula('CP4H11O18Cl4S10Cd11NiN4O')
     print(f)
@@ -544,7 +545,7 @@ def test7():
     f = EmpericalFormula('KKr2KKrOOO3Li1Li2Li')
     print(f)
     print(f.dict_formula)
-
+"""
 def test8():
 
     import random
@@ -574,6 +575,7 @@ def test8():
     #print('Mono mass', f.getMonoWeight())
 
     #print(mm.Formula(f()).mass)
+"""
 
 def test9():
     o1 = oligoNASequence('GGAA{C18Cl2}GGATCTGTATCAAGCCGT')
@@ -596,6 +598,9 @@ def test9():
     print(49*1e6 / ext)
 
     o1 = oligoNASequence('{6FAM}TTT TTT TTT TTT TTT TT{BHQ1}T')
+    print(o1.getExtinction())
+
+    o1 = oligoNASequence('{C30O8NH35}CCTGGACAGGCGAGGAATACA{C25H27N6O7P}G')
     print(o1.getExtinction())
 
 
