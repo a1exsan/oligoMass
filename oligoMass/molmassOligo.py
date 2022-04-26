@@ -378,6 +378,12 @@ class oligoNASequence(oligoSequence):
                                self.modifications.ex_mod[key]
         return base_extinction
 
+    def getSeqLenght(self):
+        if not self._seqtab.empty:
+            return self._seqtab.shape[0]
+        else:
+            return 0
+
 
 def test():
     olig1 = oligoNASequence('+a+c*grT*mTTuUrurU')
@@ -473,8 +479,10 @@ def test5():
     o4 = oligoNASequence('GAGCGG')
 
     #o5 = oligoNASequence('GCATGGTCT{C5N3H10PO}CCCGUAGUGAGUrGrUrUrUrUrArGrUrGrCrUrArGrA')
-    o5 = oligoNASequence('GCATGGTCTCCCGUAGUGAGUrGrUrUrUrUrArGrUrGrCrUrArGrA')
-    o6 = oligoNASequence('rGrCrA rUrGrG rUrCrU rCrCrC rGrUrA rGrUrG rArGrU rGrUrU rUrUrArGrUrGrCrUrArGrA')
+    o5 = oligoNASequence('GCATGGTCTCCrCrGrUrArGrUrGrArGrUrGrUrUrUrUrArGrUrGrCrUrArGrA')
+    o6 = oligoNASequence('GCATGGTC{C5N3H10|OH}TCCrCrGrUrArGrUrGrArGrUrGrUrUrUrUrArGrUrGrCrUrArGrA')
+    o6 = oligoNASequence('{OCH2}G{OCH2}C{OCH2}A{OCH2}UGGTCTCCrCrGrUrArGrUrGrArGrUrGrUrUrUrUrArG{OCH2}U{OCH2}G{OCH2}C{OCH2}U{OCH2}A{OCH2}G{OCH2}A')
+    o6 = oligoNASequence('GT{C5N3H10|OH}CG{C5N3H10|OH}AC{C5N3H10|OH}ATTCGrGrGrArGrArUrCrUrUrCrGrUrUrUrUrArGrUrGrCrUrArGrA')
 
     print(o1.getAvgMass())
     print(o2.getAvgMass())
@@ -603,6 +611,10 @@ def test9():
     o1 = oligoNASequence('{C30O8NH35}CCTGGACAGGCGAGGAATACA{C25H27N6O7P}G')
     print(o1.getExtinction())
 
+def test10():
+    print(EmpericalFormula('C40H49N4O8P').getAverageWeight())
+    print(oligoNASequence('A*T+A TAT G{H2}CC T').getSeqLenght())
+
 
 if __name__ == '__main__':
-    test9()
+    test10()
