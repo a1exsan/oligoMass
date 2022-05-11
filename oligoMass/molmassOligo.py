@@ -378,6 +378,12 @@ class oligoNASequence(oligoSequence):
                                self.modifications.ex_mod[key]
         return base_extinction
 
+    def getSeqLength(self):
+        if not self._seqtab.empty:
+            return self._seqtab.shape[0]
+        else:
+            return 0
+
 
 def test():
     olig1 = oligoNASequence('+a+c*grT*mTTuUrurU')
