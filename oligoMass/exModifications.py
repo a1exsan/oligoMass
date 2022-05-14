@@ -64,14 +64,20 @@ class exModifDataFrame(exModifDB):
 
         self.data['code'].append('BHQ1')
         self.data['mass'].append(0)
-        self.data['ext_cf'].append(8000)
+        self.data['ext_cf'].append(35935)
         self.data['formula+'].append('C21H18N6O3C4O2H9PO2')
         self.data['formula-'].append('')
 
         self.data['code'].append('3BHQ_1')
         self.data['mass'].append(0)
-        self.data['ext_cf'].append(8000)
+        self.data['ext_cf'].append(35935)
         self.data['formula+'].append('C21H18N6O3C4O2H9PO2')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('BHQ2')
+        self.data['mass'].append(0)
+        self.data['ext_cf'].append(34000)
+        self.data['formula+'].append('C20H16N6O4C4O2H9PO2')
         self.data['formula-'].append('')
 
         self.data = pd.DataFrame(self.data)

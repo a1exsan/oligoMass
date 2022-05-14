@@ -609,6 +609,14 @@ def test9():
     o1 = oligoNASequence('{C30O8NH35}CCTGGACAGGCGAGGAATACA{C25H27N6O7P}G')
     print(o1.getExtinction())
 
+def test10():
+    o1 = oligoNASequence('TTCTGACCTGAAGGCTCTGCGC{BHQ2}G')
+    print(o1.getExtinction())
+    print(o1.getAvgMass())
+
+    o1 = oligoNASequence('TTCTGACCTGAAGGCTCTGCGC{BHQ1}G')
+    print(o1.getExtinction())
+    print(o1.getAvgMass())
 
 if __name__ == '__main__':
-    test9()
+    test10()

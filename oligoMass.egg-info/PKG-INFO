@@ -1,9 +1,6 @@
 Metadata-Version: 2.1
 Name: oligoMass
-Version: 0.1.2
-Summary: UNKNOWN
-License: UNKNOWN
-Platform: UNKNOWN
+Version: 0.1.4
 
 Description
 ===========
@@ -80,4 +77,3 @@ that equal ('AT{S|O}GC' == 'ATG*C')
 `print(extinction)`
 
 `# 55100`
-
