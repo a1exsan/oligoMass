@@ -344,6 +344,19 @@ class oligoNASequence(oligoSequence):
                     seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
         return seq
 
+    def get_3_mod_move(self, index):
+        seq = ''
+        if index < self._seqtab.shape[0]:
+            for i in range(1, index + 1):
+                if i == index:
+                    seq += self._seqtab['prefix'].loc[self._seqtab.shape[0]] + self._seqtab['nt'].loc[i] + \
+                           self._seqtab['suffix'].loc[i]
+                else:
+                    seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + \
+                           self._seqtab['suffix'].loc[i]
+            #print(seq)
+        return oligoNASequence(seq)
+
     def reset_modifications(self):
         self.modifications.reset_modif(self._seqtab)
 
@@ -618,5 +631,12 @@ def test10():
     print(o1.getExtinction())
     print(o1.getAvgMass())
 
+def test11():
+    o1 = oligoNASequence('TTCTGACCTGAAGGCTCTGCGC{BHQ1}G')
+    for i in range(1, o1.size()):
+        print(f'{o1.size() - i}')
+        print(o1.get_3_mod_move(i).sequence)
+
+
 if __name__ == '__main__':
-    test10()
+    test11()
