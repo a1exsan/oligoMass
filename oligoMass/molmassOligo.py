@@ -397,6 +397,9 @@ class oligoNASequence(oligoSequence):
         else:
             return 0
 
+    def getSeqTabDF(self):
+        return self._seqtab
+
 
 def test():
     olig1 = oligoNASequence('+a+c*grT*mTTuUrurU')
@@ -637,6 +640,10 @@ def test11():
         print(f'{o1.size() - i}')
         print(o1.get_3_mod_move(i).sequence)
 
+def test12():
+    o1 = oligoNASequence('TTCTGACC+T*GAAGGCTCTGCGC{BHQ1}G')
+    print(o1.getSeqTabDF())
+
 
 if __name__ == '__main__':
-    test11()
+    test12()
