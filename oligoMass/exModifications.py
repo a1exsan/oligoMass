@@ -80,6 +80,18 @@ class exModifDataFrame(exModifDB):
         self.data['formula+'].append('C20H16N6O4C4O2H9PO2')
         self.data['formula-'].append('')
 
+        self.data['code'].append('Cy5')
+        self.data['mass'].append(510.95)
+        self.data['ext_cf'].append(250000)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('')
+
+        self.data['code'].append('Cy5.5')
+        self.data['mass'].append(611.11)
+        self.data['ext_cf'].append(198000)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('')
+
         self.data = pd.DataFrame(self.data)
         self.data = self.data.set_index('code')
 
