@@ -81,13 +81,13 @@ class exModifDataFrame(exModifDB):
         self.data['formula-'].append('')
 
         self.data['code'].append('Cy5')
-        self.data['mass'].append(510.95)
+        self.data['mass'].append(612)
         self.data['ext_cf'].append(250000)
         self.data['formula+'].append('')
         self.data['formula-'].append('')
 
         self.data['code'].append('Cy5.5')
-        self.data['mass'].append(611.11)
+        self.data['mass'].append(712)
         self.data['ext_cf'].append(198000)
         self.data['formula+'].append('')
         self.data['formula-'].append('')

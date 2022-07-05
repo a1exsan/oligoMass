@@ -644,6 +644,11 @@ def test12():
     o1 = oligoNASequence('TTCTGACC+T*GAAGGCTCTGCGC{BHQ1}G')
     print(o1.getSeqTabDF())
 
+def test13():
+    o1 = oligoNASequence('{Cy5}TTCTGACCTGAAGGCTCTGCGC{BHQ2}G')
+    print(o1.getSeqTabDF())
+    print(o1.getAvgMass())
+
 
 if __name__ == '__main__':
-    test12()
+    test13()
