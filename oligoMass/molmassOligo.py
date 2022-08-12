@@ -649,6 +649,13 @@ def test13():
     print(o1.getSeqTabDF())
     print(o1.getAvgMass())
 
+def test14():
+    o1 = oligoNASequence('TT{mC_LNA}CTGACCTGAAGGCTCTGCGCG')
+    o2 = oligoNASequence('TT{+m}CTGACCTGAAGGCTCTGCGCG')
+    print(o1.getSeqTabDF())
+    print(o1.getAvgMass())
+    print(o2.getAvgMass())
+
 
 if __name__ == '__main__':
-    test13()
+    test14()

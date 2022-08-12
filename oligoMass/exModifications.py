@@ -97,11 +97,19 @@ class exModifDataFrame(exModifDB):
 
         self.data['in_base'] = [True for i in self.data['mass']]
 
+        self.read_external_mods_from_csv()
+
     def get_mod_properties(self, mod_code):
         if mod_code in self.data.index:
             return self.data.loc[mod_code].to_dict()
         else:
             return {'mass': 0, 'ext_cf': 0, 'formula+': '', 'formula-': '', 'in_base': False}
+
+    def read_external_mods_from_csv(self, fname='external_mods.csv'):
+        df = pd.read_csv(fname, sep='\t')
+        df.fillna('', inplace=True)
+        self.data = df.set_index('code')
+
 
 
 def test():
@@ -109,5 +117,17 @@ def test():
     print(db.data.loc['5Phos'].to_dict())
     print(db.get_mod_properties('5Phos'))
 
+def test2():
+    db = exModifDataFrame()
+    df = db.data
+    df.reset_index(inplace=True)
+    df.to_csv('external_mods.csv', index=False, sep='\t')
+    print(df)
+
+def test3():
+    db = exModifDataFrame()
+    db.read_external_mods_from_csv()
+    print(db.data)
+
 if __name__ == '__main__':
-    test()
+    test3()
