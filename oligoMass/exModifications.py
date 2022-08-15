@@ -56,11 +56,25 @@ class exModifDataFrame(exModifDB):
         self.data['formula+'].append('')
         self.data['formula-'].append('')
 
+        self.data['code'].append('xFAM')
+        self.data['mass'].append(537.5)
+        self.data['ext_cf'].append(20960)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('HPO2')
+
+        #C36O8NH40
+
         self.data['code'].append('SIMA')
         self.data['mass'].append(759)
         self.data['ext_cf'].append(31600)
         self.data['formula+'].append('')
         self.data['formula-'].append('')
+
+        self.data['code'].append('xSIMA')
+        self.data['mass'].append(759)
+        self.data['ext_cf'].append(31600)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('HPO2')
 
         self.data['code'].append('BHQ1')
         self.data['mass'].append(0)
@@ -86,17 +100,31 @@ class exModifDataFrame(exModifDB):
         self.data['formula+'].append('')
         self.data['formula-'].append('')
 
+        self.data['code'].append('xCy5')
+        self.data['mass'].append(612)
+        self.data['ext_cf'].append(250000)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('HPO2')
+
         self.data['code'].append('Cy5.5')
         self.data['mass'].append(712)
         self.data['ext_cf'].append(198000)
         self.data['formula+'].append('')
         self.data['formula-'].append('')
 
+        self.data['code'].append('xCy5.5')
+        self.data['mass'].append(712)
+        self.data['ext_cf'].append(198000)
+        self.data['formula+'].append('')
+        self.data['formula-'].append('HPO2')
+
         self.data = pd.DataFrame(self.data)
         self.data = self.data.set_index('code')
 
         self.data['in_base'] = [True for i in self.data['mass']]
 
+        #df = self.data.reset_index()
+        #df.to_csv('external_mods.csv', sep='\t', index=False)
         self.read_external_mods_from_csv()
 
     def get_mod_properties(self, mod_code):

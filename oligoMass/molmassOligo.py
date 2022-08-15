@@ -165,10 +165,17 @@ class oligoNAModifications(oligoModifications):
                     self.ex_mod[m] = 1
         # add suffix modifications
         for m in df[df['suffix'] != '']['suffix']:
-            if m in list(self.mod_list.keys()):
-                self.mod_list[m] += 1
+            if m in self.mod_alphabet:
+                if m in list(self.mod_list.keys()):
+                    self.mod_list[m] += 1
+                else:
+                    self.mod_list[m] = 1
             else:
-                self.mod_list[m] = 1
+                m = m[1:-1]
+                if m in list(self.ex_mod.keys()):
+                    self.ex_mod[m] += 1
+                else:
+                    self.ex_mod[m] = 1
 
 
     def _add_mod(self, letter):
@@ -195,6 +202,7 @@ class oligoNAModifications(oligoModifications):
 
     def _get_mod_formula(self, formula):
         ff = EmpericalFormula(formula)
+        #print(self.mod_list.keys(), self.mod_formula.keys(), self.ex_mod.keys())
         for k in self.mod_list.keys():
             if self.mod_list[k] > 0:
                 ff += EmpericalFormula(self.mod_formula[k][0]) * self.mod_list[k]
@@ -252,7 +260,7 @@ class oligoNASequence(oligoSequence):
     def __init__(self, sequence):
         super().__init__(sequence)
         self.is_mixed = False
-        self.alphabet = 'A G C T U a g c t u R Y M K ' \
+        self.alphabet = 'A G C T U X a g c t u x R Y M K ' \
                         'S W H B V D N'.split(' ')
         self.mixed_alphabet = 'R Y M K ' \
                         'S W H B V D N'.split(' ')
@@ -297,6 +305,7 @@ class oligoNASequence(oligoSequence):
         index = 1
         for letter in seq_list:
             if letter in self.alphabet and not self.modifications.modRead:
+                #print('prefix', self.modifications.last_mod)
                 if letter in self.mixed_alphabet:
                     self.is_mixed = True
                 self.seq += letter.upper()
@@ -308,13 +317,18 @@ class oligoNASequence(oligoSequence):
                 index += 1
             else:
                 self.modifications._add_mod(letter)
+                #print(self.modifications.last_mod)
                 if self.modifications.last_mod in ['*']:
+                    self._seqtab['suffix'][-1] = self.modifications.last_mod
+                    self.modifications.last_mod = ''
+                elif self.modifications.last_mod in ['[BHQ1]', '[BHQ2]']:
                     self._seqtab['suffix'][-1] = self.modifications.last_mod
                     self.modifications.last_mod = ''
 
         self._seqtab = pd.DataFrame(self._seqtab)
         self._seqtab.set_index('index', inplace=True)
         self.sequence = self.__getSeqFromTab()
+        #print(self._seqtab)
 
         self.modifications.reset_modif(self._seqtab)
         return self.sequence
@@ -326,7 +340,10 @@ class oligoNASequence(oligoSequence):
         seq = ''
         if index < self._seqtab.shape[0]:
             for i in range(1, index + 1):
-                seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
+                if i < index:
+                    seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[i]
+                else:
+                    seq += self._seqtab['prefix'].loc[i] + self._seqtab['nt'].loc[i] + self._seqtab['suffix'].loc[self._seqtab.shape[0]]
         return oligoNASequence(seq)
 
     def getSuffix(self, index):
@@ -656,6 +673,37 @@ def test14():
     print(o1.getAvgMass())
     print(o2.getAvgMass())
 
+def test15():
+    oligo = oligoNASequence('{6FAM}CGTACGT{BHQ2}')
+
+    for i in range(1, oligo.getSeqLength()):
+
+        prefix = oligo.getPrefix(i)
+        suffix = oligo.getSuffix(i)
+        if i > 1:
+            deletion = oligo.getDeletion(i)
+        else:
+            deletion = ''
+        print(prefix.sequence, suffix.sequence, deletion)
+        print(prefix.getAvgMass(), suffix.getAvgMass())
+
+def test16():
+    oligo = oligoNASequence('ACGT+X')
+    print(oligo.molecularFormula)
+    oligo1 = oligoNASequence('ACGT')
+    print(oligo1.molecularFormula)
+    print(oligo.getAvgMass())
+    print(oligo1.getAvgMass())
+    print(oligo.getAvgMass() - oligo1.getAvgMass())
+
+    print(EmpericalFormula('HPO2CO').getAverageWeight())
+    print(EmpericalFormula('C36O8NH40').getAverageWeight())
+
+    oligo = oligoNASequence('{xFAM}XACGT')
+    print(oligo.getAvgMass())
+
+    oligo = oligoNASequence('{6FAM}ACGT')
+    print(oligo.getAvgMass())
 
 if __name__ == '__main__':
-    test14()
+    test16()

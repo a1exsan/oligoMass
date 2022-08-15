@@ -90,7 +90,13 @@ class deoxynusleosideDB():
         self.dU.formula = 'C9H12N2O5'
         self.dU.seqformula = 'C9H10N2O5'
 
-        self.Nsymbol = {'A': self.dA, 'T': self.dT, 'G': self.dG, 'C': self.dC, 'U': self.dU}
+        self.dX = nucleoside()
+        self.dX.name = 'Any'
+        self.dX.symbol = 'X'
+        self.dX.formula = ''
+        self.dX.seqformula = ''
+
+        self.Nsymbol = {'A': self.dA, 'T': self.dT, 'G': self.dG, 'C': self.dC, 'U': self.dU, 'X': self.dX}
 
     def __call__(self, symbol):
         return self.Nsymbol[symbol]

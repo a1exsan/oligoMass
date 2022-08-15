@@ -1,8 +1,9 @@
-__version__ = '0.0.5'
+__version__ = '0.1.9'
 
 
 __all__ = [
     'dna',
     'molmassOligo',
-    'exModifications'
+    'exModifications',
+    'ElementsTable'
 ]
